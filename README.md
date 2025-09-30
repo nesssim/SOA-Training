@@ -1,64 +1,154 @@
-# 📘 Service-Oriented Architecture- Training
+# 🧪 Workshop REST n°1 — SOA 
 
-## 🎯 Learning Objectives
-This **21-hours Training Session** aims to enable students to:
+## 📘 Overview
+In this workshop, you will develop a **RESTful Web Service** in **Java (JAX-RS)** to expose business methods for two entities:
+- `UniteEnseignement` (Teaching Unit)
+- `Module`
 
-- Master **Service-Oriented Architecture (SOA)**.
-- Understand the difference between **SOAP and REST**.
-- Learn the fundamental concepts of **SOAP**.
-- Implement **RESTful web services** using **JAX-RS**.
-- Develop applications in **Java** with **Maven**.
-- Understand **JWT (JSON Web Token)** and secure an application with JWT.
-- Optimize the performance of a REST application using **GraphQL**.
-- Implement a **Java project** leveraging **GraphQL**.
+You will follow the same approach as the **pilot example** (`HelloRessources`) studied in class, but instead of returning simple text, you will expose **CRUD operations** and **search features** for these entities.
 
-## 📅 Sessions Content (21 hours)
+---
 
-### 🏗️ Part 1: Introduction to SOA (3h)
-- Definition and principles of **Service-Oriented Architecture**.
-- Differences between **monoliths** and **microservices**.
-- Comparison of **SOAP vs REST**.
+## 🎯 Objectives
+- Understand how to model entities (`Module`, `UniteEnseignement`) in Java.  
+- Expose CRUD and query endpoints using **JAX-RS resources**.  
+- Separate **business logic** (controller/service) from **resource classes**.  
+- Deploy a **Maven WAR** to Tomcat and test with **Postman**.  
+- Apply **REST best practices** (status codes, content types).  
 
-### 🔗 Part 2: Web Services with SOAP (3h)
-- Structure of a **SOAP message**.
-- Development of a **SOAP Web Service** in Java.
-- Manipulation with **WSDL** and **UDDI**.
+---
 
-### 🌐 Part 3: RESTful Web Services with JAX-RS (6h)
-- Introduction to **JAX-RS** and its **annotations**.
-- Implementation of a **REST Web Service** in Java.
-- Handling **GET, POST, PUT, DELETE** methods.
-- Testing with **Postman**.
+## 🧠 Context
+The university is modernizing its academic system.  
+Currently, students, teachers, and administrators use a web portal for:
+- module registration,
+- grades consultation,
+- schedule management,
+- internal communication.  
 
-### 🔒 Part 4: Security with JWT (3h)
-- Introduction to **JSON Web Token (JWT)**.
-- Implementation of **authentication and authorization** with JWT.
-- Integration of **JWT** in a Java project.
+The goal is to **expose some of these features via a REST API** to enable interoperability and mobile client support.
 
-### 🚀 Part 5: Optimization with GraphQL (6h)
-- Introduction to **GraphQL** and its differences from REST.
-- Development of a **GraphQL API** in Java.
-- Performance optimization with **GraphQL Queries & Mutations**.
-- Building a **Java project** using **GraphQL**.
+---
 
-## 🛠️ Technologies and Tools Used
-- **Language**: Java  
-- **Tools**: JAX-RS, GraphQL Java  
-- **Project Management**: Maven  
-- **Security**: JWT  
-- **Testing & API Client**: Postman  
+## 🧩 Entities
 
-## 📌 Prerequisites
-- Basic knowledge of **Java**.  
-- Familiarity with **Web APIs** and HTTP.  
+### 1. `UniteEnseignement`
+```java
+package entities;
 
-## 📢 Additional Resources
-- [Official JAX-RS Documentation](https://jakarta.ee/specifications/restful-ws/)  
-- [GraphQL Java Guide](https://www.graphql-java.com/)  
-- [JWT Introduction](https://jwt.io/introduction/)  
-## 👨‍🏫 Instructor: 
-[Dr. Badia Bouhdid](https://www.linkedin.com/in/badiabouhdid/)
-## 🎓 Acknowledgment
-This project is part of the academic training provided by **ESPRIT School of Engineering**, aiming to equip students with industry-relevant skills in modern software development.  
+public class UniteEnseignement {
+    private int code;
+    private String domaine;
+    private String responsable;
+    private int credits;
+    private int semestre;
 
+    public UniteEnseignement() {}
+    public UniteEnseignement(int code, String domaine, String responsable, int credits, int semestre) {
+        this.code = code;
+        this.domaine = domaine;
+        this.responsable = responsable;
+        this.credits = credits;
+        this.semestre = semestre;
+    }
+    // Getters & Setters
+}
+```
 
+### 2. `Module`
+- Attributes: `matricule`, `nom`, `coefficient`, `volumeHoraire`, `type`, `uniteEnseignement`.  
+- Enum `TypeModule`: `TRANSVERSAL`, `PROFESSIONNEL`, `RECHERCHE`.  
+- Implement `equals()` and `hashCode()`.  
+
+---
+
+## ⚙️ Project Setup
+1. Create a **Maven project** in IntelliJ with packaging type `war`.  
+2. Add dependencies:  
+   - `javax.servlet:javax.servlet-api:4.0.1`  
+   - JAX-RS implementation (e.g., Jersey).  
+3. Add a JAX-RS Activator:  
+   ```java
+   @ApplicationPath("/api")
+   public class RestActivator extends Application {}
+   ```
+4. Project structure:
+```
+src/main/java
+  ├─ entities
+  ├─ business       // service classes
+  └─ webservices    // REST resources
+```
+
+---
+
+## 🔗 Endpoints to Implement
+
+### A) `UniteEnseignement` — `/UE`
+- `POST /UE` → Create a new teaching unit (XML input).  
+- `GET /UE` → List all teaching units (JSON output).  
+- `GET /UE?semestre=2` → List teaching units for a semester.  
+- `GET /UE?code=123` → Get UE by code.  
+- `PUT /UE/{id}` → Update UE (XML input).  
+- `DELETE /UE/{id}` → Delete UE.  
+
+### B) `Module` — `/modules`
+- `POST /modules` → Create module (JSON input).  
+- `GET /modules` → List all modules (JSON output).  
+- `GET /modules/{matricule}` → Get module by matricule.  
+- `PUT /modules/{matricule}` → Update module (JSON input).  
+- `DELETE /modules/{matricule}` → Delete module.  
+- `GET /modules/UE?codeUE=1` → List all modules of a given UE.  
+
+---
+
+## 🧪 Testing
+- Use **Postman** to test all endpoints.  
+- Input formats:
+  - `application/xml` for UE creation/update.  
+  - `application/json` for modules.  
+- Output format: `application/json`.  
+- Return proper HTTP codes (`200 OK`, `201 Created`, `404 Not Found`, `400 Bad Request`).  
+
+---
+
+## 📦 Deliverables
+- A complete Maven project with:
+  - Entities (`UniteEnseignement`, `Module`).  
+  - Business layer (services).  
+  - REST Resources.  
+- Postman collection + screenshots for each endpoint.  
+- Updated `README.md` with your group details.  
+
+---
+
+## 📝 Submission
+- Create a **GitHub repo** for your team.  
+- Push your project and Postman files.  
+- Submit your repository URL on the LMS.  
+
+---
+
+## 🧮 Evaluation
+| Criterion | Weight |
+|-----------|---------|
+| Correct endpoints & paths | 25% |
+| HTTP status codes & media types | 15% |
+| Business logic separation | 20% |
+| CRUD implementation | 20% |
+| Tests (Postman evidence) | 15% |
+| Repo & documentation quality | 5% |
+
+---
+
+## 🚀 Next Steps
+Once your REST API is working, we will later explore:
+- **Interoperability** (connecting with clients).  
+- **Security** with JWT.  
+- **GraphQL** as an alternative to REST.
+- ---
+### 👨‍🏫 Instructor
+- **[Badia Bouhdid](https://www.linkedin.com/in/badiabouhdid)**
+---
+
+🏫 This training is delivered as part of the **Client-Side Application 1** module at [Esprit School of Engineering](https://www.esprit.tn)
