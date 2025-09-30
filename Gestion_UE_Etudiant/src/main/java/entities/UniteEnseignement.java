@@ -1,5 +1,7 @@
 package entities;
 
+import java.util.Objects;
+
 public class UniteEnseignement {
     private int code;
     private String domaine;
@@ -58,5 +60,16 @@ public class UniteEnseignement {
         this.semestre = semestre;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UniteEnseignement that = (UniteEnseignement) o;
+        return code == that.code && credits == that.credits && semestre == that.semestre && Objects.equals(domaine, that.domaine) && Objects.equals(responsable, that.responsable);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(code, domaine, responsable, credits, semestre);
+    }
 }
