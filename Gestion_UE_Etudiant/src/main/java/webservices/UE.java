@@ -13,19 +13,19 @@ public class UE {
 
     @POST
     @Path("/create")
-    @Produces(MediaType.APPLICATION_JSON)   // ✅ Changed to JSON
+    @Produces(MediaType.APPLICATION_JSON)
     public Response CreateEnseignement() {
         UniteEnseignement ue = new UniteEnseignement(333, "Informatique", "MR Nessim Mezhoud", 6, 2);
         boolean a = helper.addUniteEnseignement(ue);
 
         if (a == true) {
             return Response
-                    .status(201)                  // ✅ 201 for Created
+                    .status(201)
                     .entity("Status 201Created")
                     .build();
         } else {
             return Response
-                    .status(400)                  // ✅ 400 for Bad Request
+                    .status(400)
                     .entity(" 404 Not Found }")
                     .build();
         }
@@ -41,7 +41,7 @@ public class UE {
                 .build();
     }
 
-    @Path("/findSem")  // ✅ Fixed path
+    @Path("/findSem")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUEBySemester(@QueryParam("semester") int semester) {
@@ -69,7 +69,7 @@ public class UE {
     }
 
     @PUT
-    @Path("/updateUe")  // This captures the code from URL path
+    @Path("/updateUe")
     @Consumes(MediaType.APPLICATION_XML)  // Accept XML input
     @Produces(MediaType.APPLICATION_JSON)
     public Response UpdateUE(@QueryParam("code") int code, UniteEnseignement ue) {
